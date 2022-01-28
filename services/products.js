@@ -1,15 +1,20 @@
 const model = require('../models/products');
 
-const validateName = async (name) => {
+const validateName = (name) => {
   if (name === '' || name === undefined) {
     return { validate: false, message: '"name" is required', status: 400 };
   }
   if (name.length < 5) {
     return { validate: false,
       message: '"name" length must be at least 5 characters long',
-      status: 402,
+      status: 422,
     };
   }
+
+  return true;
+};
+
+const alreadyExistsProd = async (name) => {
   const find = await model.findName(name);
   if (find.length >= 1) {
     return { validate: false,
@@ -34,13 +39,14 @@ const validateQuantity = (quantity) => {
 
 const getAllProduct = async () => {
   const products = await model.getAllProduct();
-
   return products;
 };
 
 const saveProduct = async (name, quantity) => {
-  const authName = await validateName(name);
+  const authName = validateName(name);
   const authQuantity = validateQuantity(quantity);
+  const authProductExists = await alreadyExistsProd(name);
+  if (authProductExists !== true) return authProductExists;
   if (authName !== true) return authName;
   if (authQuantity !== true) return authQuantity;
   const result = await model.saveProduct(name, quantity);

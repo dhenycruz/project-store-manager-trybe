@@ -9,15 +9,14 @@ const getAllProduct = async () => {
 };
 
 const findName = async (productName) => {
-  const [products] = await conection.execute(
-    'SELECT * FROM StoreManager.products WHERE name = ?', [productName],
-  );
-
-  return products;
+    const [products] = await conection.execute(
+      'SELECT * FROM StoreManager.products WHERE name = ?', [productName],
+    );
+    return products;
 };
 
 const saveProduct = async (name, quantity) => {
-  const result = conection.execute(
+  const result = await conection.execute(
     'INSERT INTO StoreManager.products (name, quantity) VALUES (?,?)',
     [name, quantity], 
   );

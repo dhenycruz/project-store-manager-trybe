@@ -8,8 +8,7 @@ const getAllProduct = async (_resquest, response) => {
 const saveProduct = async (request, response) => {
   const { name, quantity } = request.body;
   const result = await products.saveProduct(name, quantity);
-  console.log(result);
-  if (!result.validate) return response.status(result.status).json(result.message);
+  if (!result.validate) return response.status(result.status).json({ message: result.message });
   response.status(200).json(result.result);
 };
 
