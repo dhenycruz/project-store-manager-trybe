@@ -57,12 +57,12 @@ const getProduct = async (id) => {
 };
 
 const saveProduct = async (name, quantity) => {
-  const authName = validateName(name);
+  /* const authName = validateName(name);
   const authQuantity = validateQuantity(quantity);
   if (authName !== true) return authName;
   if (authQuantity !== true) return authQuantity;
   const authAlreadyExists = await alreadyExistsProd(name);
-  if (authAlreadyExists !== true) return authAlreadyExists;
+  if (authAlreadyExists !== true) return authAlreadyExists; */
 
   const result = await model.saveProduct(name, quantity);
   return {
@@ -72,6 +72,9 @@ const saveProduct = async (name, quantity) => {
 };
 
 module.exports = {
+  validateName,
+  validateQuantity,
+  alreadyExistsProd,
   getAllProduct,
   getProduct,
   saveProduct,

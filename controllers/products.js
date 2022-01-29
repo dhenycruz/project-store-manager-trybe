@@ -1,5 +1,39 @@
 const products = require('../services/products');
 
+const authName = (request, response, next) => {
+  const { name } = request.body;
+  const validateName = products.validateName(name);
+  if (validateName !== true) {
+    return response.status(validateName.status)
+    .json({ message: validateName.message });
+  }
+  next();
+};
+
+const authQuantity = (request, response, next) => {
+  const { quantity } = request.body;
+  const validateQuantity = products.validateQuantity(quantity);
+  if (validateQuantity !== true) { 
+    return response.status(
+      validateQuantity.status,
+    ).json({ message: validateQuantity.message });
+  }
+  next();
+};
+
+const authAlreadyExists = async (request, response, next) => {
+  const { name } = request.body;
+  const validateAlreadyExistsProd = await products.alreadyExistsProd(name);
+  if (validateAlreadyExistsProd !== true) {
+    return response.status(
+      validateAlreadyExistsProd.status,
+      ).json({
+        message: validateAlreadyExistsProd.message,
+      });
+  }
+  next();
+};
+
 const getAllProduct = async (_resquest, response) => {
   const productsAll = await products.getAllProduct();
   response.status(200).json(productsAll);
@@ -20,6 +54,9 @@ const saveProduct = async (request, response) => {
 };
 
 module.exports = {
+  authName,
+  authQuantity,
+  authAlreadyExists,
   getAllProduct,
   getProduct,
   saveProduct,

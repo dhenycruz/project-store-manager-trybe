@@ -18,6 +18,7 @@ app.listen(process.env.PORT, () => {
 
 app.get('/products', products.getAllProduct);
 
-app.post('/products', products.saveProduct);
+app.post('/products', 
+  products.authName, products.authQuantity, products.authAlreadyExists, products.saveProduct);
 
 app.get('/products/:id', products.getProduct);
