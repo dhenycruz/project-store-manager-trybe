@@ -10,7 +10,25 @@ const validateName = (name) => {
       status: 422,
     };
   }
+  return true;
+};
 
+const validateQuantity = (quantity) => {
+  if (quantity === '' || quantity === undefined) {
+    return {
+      validate: false,
+      message: '"quantity" is required',
+      status: 400,
+    };
+  }
+  // eslint-disable-next-line no-undef
+  if (typeof quantity === 'string' || quantity <= 0) {
+    return {
+      validate: false,
+      message: '"quantity" must be a number larger than or equal to 1',
+      status: 422,
+    };
+  }
   return true;
 };
 
@@ -25,18 +43,6 @@ const alreadyExistsProd = async (name) => {
   return true;
 };
 
-const validateQuantity = (quantity) => {
-  if (quantity === '' || quantity === undefined) {
-    return {
-      validate: false,
-      message: '"quantity" is required',
-      status: 400,
-    };
-  }
-
-  return true;
-};
-
 const getAllProduct = async () => {
   const products = await model.getAllProduct();
   return products;
@@ -45,10 +51,11 @@ const getAllProduct = async () => {
 const saveProduct = async (name, quantity) => {
   const authName = validateName(name);
   const authQuantity = validateQuantity(quantity);
-  const authProductExists = await alreadyExistsProd(name);
-  if (authProductExists !== true) return authProductExists;
   if (authName !== true) return authName;
   if (authQuantity !== true) return authQuantity;
+  const authAlreadyExists = await alreadyExistsProd(name);
+  if (authAlreadyExists !== true) return authAlreadyExists;
+
   const result = await model.saveProduct(name, quantity);
   return {
     validate: true,

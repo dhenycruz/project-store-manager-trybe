@@ -9,7 +9,7 @@ const saveProduct = async (request, response) => {
   const { name, quantity } = request.body;
   const result = await products.saveProduct(name, quantity);
   if (!result.validate) return response.status(result.status).json({ message: result.message });
-  response.status(200).json(result.result);
+  response.status(201).json(result.result);
 };
 
 module.exports = {
