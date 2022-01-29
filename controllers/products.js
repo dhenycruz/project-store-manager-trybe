@@ -5,6 +5,13 @@ const getAllProduct = async (_resquest, response) => {
   response.status(200).json(productsAll);
 };
 
+const getProduct = async (request, response) => {
+  const { id } = request.params;
+  const product = await products.getProduct(id);
+  if (!product) return response.status(404).json({ message: 'Product not found' }); 
+  response.status(200).json(product);
+};
+
 const saveProduct = async (request, response) => {
   const { name, quantity } = request.body;
   const result = await products.saveProduct(name, quantity);
@@ -14,5 +21,6 @@ const saveProduct = async (request, response) => {
 
 module.exports = {
   getAllProduct,
+  getProduct,
   saveProduct,
 };
