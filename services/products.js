@@ -75,6 +75,12 @@ const saveProduct = async (name, quantity) => {
   };
 };
 
+const deleteProduct = async (id) => {
+  const product = await getProduct(id);
+  await model.deleteProduct(id);
+  return product;
+};
+
 module.exports = {
   validateName,
   validateQuantity,
@@ -83,4 +89,5 @@ module.exports = {
   getProduct,
   updateProduct,
   saveProduct,
+  deleteProduct,
 };

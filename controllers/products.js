@@ -34,7 +34,7 @@ const authAlreadyExists = async (request, response, next) => {
   next();
 };
 
-const authUpdateExistsProduct = async (request, response, next) => {
+const authExistsProduct = async (request, response, next) => {
   const { id } = request.params;
   const validateProduct = await products.getProduct(id);
   if (!validateProduct) return response.status(404).json({ message: 'Product not found' });
@@ -67,13 +67,20 @@ const saveProduct = async (request, response) => {
   response.status(201).json(result.result);
 };
 
+const deleteProduct = async (request, response) => {
+  const { id } = request.params;
+  const returnProduct = await products.deleteProduct(id);
+  response.status(200).json(returnProduct);
+};
+
 module.exports = {
   authName,
   authQuantity,
   authAlreadyExists,
-  authUpdateExistsProduct,
+  authExistsProduct,
   getAllProduct,
   getProduct,
   updateProduct,
   saveProduct,
+  deleteProduct,
 };

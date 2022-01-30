@@ -24,4 +24,6 @@ app.post('/products',
 app.get('/products/:id', products.getProduct);
 
 app.put('/products/:id',
-products.authName, products.authQuantity, products.authUpdateExistsProduct, products.updateProduct);
+products.authName, products.authQuantity, products.authExistsProduct, products.updateProduct);
+
+app.delete('/products/:id', products.authExistsProduct, products.deleteProduct);
