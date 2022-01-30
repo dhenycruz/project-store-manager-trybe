@@ -22,3 +22,6 @@ app.post('/products',
   products.authName, products.authQuantity, products.authAlreadyExists, products.saveProduct);
 
 app.get('/products/:id', products.getProduct);
+
+app.put('/products/:id',
+products.authName, products.authQuantity, products.authUpdateExistsProduct, products.updateProduct);

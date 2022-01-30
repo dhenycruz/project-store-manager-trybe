@@ -56,6 +56,10 @@ const getProduct = async (id) => {
   return products[0];
 };
 
+const updateProduct = async (id, product) => {
+  await model.updateProduct(id, product);
+};
+
 const saveProduct = async (name, quantity) => {
   /* const authName = validateName(name);
   const authQuantity = validateQuantity(quantity);
@@ -77,5 +81,6 @@ module.exports = {
   alreadyExistsProd,
   getAllProduct,
   getProduct,
+  updateProduct,
   saveProduct,
 };

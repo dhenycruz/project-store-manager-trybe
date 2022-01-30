@@ -15,11 +15,19 @@ const getProduct = async (id) => {
 
   return products;
 };
+
 const findName = async (productName) => {
     const [products] = await conection.execute(
       'SELECT * FROM StoreManager.products WHERE name = ?', [productName],
     );
     return products;
+};
+
+const updateProduct = (id, { name, quantity }) => {
+  conection.execute(
+    'UPDATE StoreManager.products SET name = ?, quantity = ? WHERE id = ?',
+    [name, quantity, id],
+  );
 };
 
 const saveProduct = async (name, quantity) => {
@@ -34,5 +42,6 @@ module.exports = {
   getAllProduct,
   getProduct,
   findName,
+  updateProduct,
   saveProduct,
 };
