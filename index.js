@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const products = require('./controllers/products');
+const sales = require('./controllers/sales');
 
 const app = express();
 
@@ -27,3 +28,7 @@ app.put('/products/:id',
 products.authName, products.authQuantity, products.authExistsProduct, products.updateProduct);
 
 app.delete('/products/:id', products.authExistsProduct, products.deleteProduct);
+
+app.get('/sales', sales.getAllSales);
+
+app.post('/sales', sales.authProduct, sales.authQuantity, sales.createSale);

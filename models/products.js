@@ -1,7 +1,7 @@
-const conection = require('./conection');
+const connection = require('./connection');
 
 const getAllProduct = async () => {
-  const [products] = await conection.execute(
+  const [products] = await connection.execute(
     'SELECT * FROM StoreManager.products',
   );
 
@@ -9,7 +9,7 @@ const getAllProduct = async () => {
 };
 
 const getProduct = async (id) => {
-  const [products] = await conection.execute(
+  const [products] = await connection.execute(
     'SELECT * FROM StoreManager.products WHERE id = ?', [id],
   );
 
@@ -17,21 +17,21 @@ const getProduct = async (id) => {
 };
 
 const findName = async (productName) => {
-    const [products] = await conection.execute(
+    const [products] = await connection.execute(
       'SELECT * FROM StoreManager.products WHERE name = ?', [productName],
     );
     return products;
 };
 
 const updateProduct = (id, { name, quantity }) => {
-  conection.execute(
+  connection.execute(
     'UPDATE StoreManager.products SET name = ?, quantity = ? WHERE id = ?',
     [name, quantity, id],
   );
 };
 
 const saveProduct = async (name, quantity) => {
-  const result = await conection.execute(
+  const result = await connection.execute(
     'INSERT INTO StoreManager.products (name, quantity) VALUES (?,?)',
     [name, quantity], 
   );
@@ -39,7 +39,7 @@ const saveProduct = async (name, quantity) => {
 };
 
 const deleteProduct = async (id) => {
-  await conection.execute(
+  await connection.execute(
     'DELETE FROM StoreManager.products WHERE id = ?', [id],
   );
 };

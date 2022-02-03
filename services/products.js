@@ -1,6 +1,6 @@
 const model = require('../models/products');
 
-const validateName = (name) => {
+const authName = (name) => {
   if (name === '' || name === undefined) {
     return { validate: false, message: '"name" is required', status: 400 };
   }
@@ -13,7 +13,7 @@ const validateName = (name) => {
   return true;
 };
 
-const validateQuantity = (quantity) => {
+const authQuantity = (quantity) => {
   if (quantity === '' || quantity === undefined) {
     return {
       validate: false,
@@ -82,8 +82,8 @@ const deleteProduct = async (id) => {
 };
 
 module.exports = {
-  validateName,
-  validateQuantity,
+  authName,
+  authQuantity, 
   alreadyExistsProd,
   getAllProduct,
   getProduct,

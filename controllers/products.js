@@ -2,7 +2,7 @@ const products = require('../services/products');
 
 const authName = (request, response, next) => {
   const { name } = request.body;
-  const validateName = products.validateName(name);
+  const validateName = products.authName(name);
   if (validateName !== true) {
     return response.status(validateName.status)
     .json({ message: validateName.message });
@@ -12,7 +12,7 @@ const authName = (request, response, next) => {
 
 const authQuantity = (request, response, next) => {
   const { quantity } = request.body;
-  const validateQuantity = products.validateQuantity(quantity);
+  const validateQuantity = products.authQuantity(quantity);
   if (validateQuantity !== true) { 
     return response.status(
       validateQuantity.status,
