@@ -13,12 +13,10 @@ const createSale = async (data) => {
     'INSERT INTO StoreManager.sales () values ()',
   );
   const saleId = row.insertId;
-  data.forEach((products) => {
-    connection.execute(
-      'INSERT INTO StoreManager.sales_products (sale_id, product_id, quantity) VALUES (?,?,?)',
-      [saleId, products.product_id, products.quantity],
-    );
-  });
+  Promise.all(data.map((products) => connection.execute(
+        'INSERT INTO StoreManager.sales_products (sale_id, product_id, quantity) VALUES (?,?,?)',
+        [saleId, products.product_id, products.quantity],
+      )));
   return {
     id: saleId,
     itemsSold: data,
