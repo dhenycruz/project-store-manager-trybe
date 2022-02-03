@@ -19,7 +19,7 @@ const authQuantity = (request, response, next) => {
 };
 
 const getAllSales = async (_request, response) => {
-  const salesAll = sales.getAllSales();
+  const salesAll = await sales.getAllSales();
   response.status(200).json(salesAll);
 };
 
