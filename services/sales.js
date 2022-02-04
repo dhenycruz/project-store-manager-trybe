@@ -9,7 +9,7 @@ const authProduct = async (dataRequest) => {
   const products = await modelProduct.getAllProduct();
   const authProductBody = dataRequest.some((
     data,
-    ) => data.product_id === '' || data.product_id === undefined);
+    ) => data.product_id === '' || data.product_id === undefined || data.product_id === null);
 
   if (authProductBody) return authFail;
   const productsBody = dataRequest.some((data) => {

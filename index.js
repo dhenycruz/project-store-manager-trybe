@@ -31,4 +31,6 @@ app.delete('/products/:id', products.authExistsProduct, products.deleteProduct);
 
 app.get('/sales', sales.getAllSales);
 
+app.get('/sales/:id');
+
 app.post('/sales', sales.authProduct, sales.authQuantity, sales.createSale);
