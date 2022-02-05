@@ -36,10 +36,18 @@ const createSale = async (request, response) => {
   response.status(201).json(sale);
 };
 
+const updateSale = async (request, response) => {
+  const data = request.body;
+  const { id } = request.params;
+  const saleUpdate = await sales.updateSale(id, data);
+  response.status(200).json(saleUpdate);
+};
+
 module.exports = {
   authProduct,
   authQuantity,
   getAllSales,
   getSale,
   createSale,
+  updateSale,
 };

@@ -38,8 +38,19 @@ const createSale = async (data) => {
   };
 };
 
+const updateSale = async (id, data) => {
+  await Promise.all(data.map(async (product) => {
+    const updateProduct = await connection.execute(
+      'UPDATE StoreManager.sales_products SET quantity = ? WHERE sale_id = ? AND product_id = ?',
+      [product.quantity, id, product.product_id],
+    );
+    return updateProduct;
+  }));
+};
+
 module.exports = {
   getAllSales,
   getSale,
   createSale,
+  updateSale,
 };

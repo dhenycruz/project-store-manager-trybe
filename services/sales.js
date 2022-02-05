@@ -59,10 +59,19 @@ const createSale = async (data) => {
   return sale;
 };
 
+const updateSale = async (id, data) => {
+  await model.updateSale(id, data);
+  return {
+    saleId: id,
+    itemUpdated: data,
+  };
+};
+
 module.exports = {
   authProduct,
   authQuantity,
   getAllSales,
   getSale,
   createSale,
+  updateSale,
 };
