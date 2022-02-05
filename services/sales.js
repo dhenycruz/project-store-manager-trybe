@@ -48,6 +48,12 @@ const getAllSales = async () => {
   return sales;
 };
 
+const getSale = async (id) => {
+  const sale = await model.getSale(id);
+  if (sale.length < 1) return true;
+  return sale;
+};
+
 const createSale = async (data) => {
   const sale = await model.createSale(data);
   return sale;
@@ -57,5 +63,6 @@ module.exports = {
   authProduct,
   authQuantity,
   getAllSales,
+  getSale,
   createSale,
 };

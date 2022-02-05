@@ -23,6 +23,13 @@ const getAllSales = async (_request, response) => {
   response.status(200).json(salesAll);
 };
 
+const getSale = async (request, response) => {
+  const { id } = request.params;
+  const sale = await sales.getSale(id);
+  if (sale === true) return response.status(404).json({ message: 'Sale not found' });
+  response.status(200).json(sale);
+};
+
 const createSale = async (request, response) => {
   const data = request.body;
   const sale = await sales.createSale(data);
@@ -33,5 +40,6 @@ module.exports = {
   authProduct,
   authQuantity,
   getAllSales,
+  getSale,
   createSale,
 };

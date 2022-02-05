@@ -9,9 +9,9 @@ const getAllSales = async () => {
   return sales;
 };
 
-const getSales = async (id) => {
+const getSale = async (id) => {
   const [sales] = await connection.execute(
-    `SELECT sp.sale_id as saleId, s.date, sp.product_id, sp.quantity 
+    `SELECT s.date, sp.product_id, sp.quantity 
     FROM StoreManager.sales as s INNER JOIN StoreManager.sales_products as sp
     ON s.id = sp.sale_id WHERE sp.sale_id = ?`,
     [id],
@@ -40,6 +40,6 @@ const createSale = async (data) => {
 
 module.exports = {
   getAllSales,
-  getSales,
+  getSale,
   createSale,
 };
