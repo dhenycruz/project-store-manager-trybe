@@ -43,6 +43,13 @@ const updateSale = async (request, response) => {
   response.status(200).json(saleUpdate);
 };
 
+const deleteSale = async (request, response) => {
+  const { id } = request.params;
+  const res = await sales.deleteSale(id);
+  if (res === true) return response.status(404).json({ message: 'Sale not found' });
+  response.status(200).json(res);
+};
+
 module.exports = {
   authProduct,
   authQuantity,
@@ -50,4 +57,5 @@ module.exports = {
   getSale,
   createSale,
   updateSale,
+  deleteSale,
 };

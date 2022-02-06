@@ -67,6 +67,16 @@ const updateSale = async (id, data) => {
   };
 };
 
+const deleteSale = async (id) => {
+  const sale = await model.getSale(id);
+
+  if (sale < 1) return true;
+  
+  await model.deleteSale(id);
+
+  return sale;
+};
+
 module.exports = {
   authProduct,
   authQuantity,
@@ -74,4 +84,5 @@ module.exports = {
   getSale,
   createSale,
   updateSale,
+  deleteSale,
 };

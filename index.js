@@ -36,3 +36,5 @@ app.get('/sales/:id', sales.getSale);
 app.post('/sales', sales.authProduct, sales.authQuantity, sales.createSale);
 
 app.put('/sales/:id', sales.authProduct, sales.authQuantity, sales.updateSale);
+
+app.delete('/sales/:id', sales.deleteSale);
