@@ -71,7 +71,7 @@ const saveProduct = async (name, quantity) => {
   const result = await model.saveProduct(name, quantity);
   return {
     validate: true,
-    result: { id: result[0].insertId, name, quantity },
+    result: { id: result.id, name, quantity },
   };
 };
 

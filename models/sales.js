@@ -24,36 +24,31 @@ const createSale = async (data) => {
     'INSERT INTO StoreManager.sales () values ()',
   );
   const saleId = row.insertId;
-  await Promise.all(data.map(async (products) => {
+  return Promise.all(data.map(async (products) => {
     const saveProduct = await connection.execute(
       'INSERT INTO StoreManager.sales_products (sale_id, product_id, quantity) VALUES (?,?,?)',
       [saleId, products.product_id, products.quantity],
     );
     return saveProduct;
-  }));
-  
-  return {
+  })).then(() => ({
     id: saleId,
     itemsSold: data,
-  };
+  }));
 };
 
-const updateSale = async (id, data) => {
-  await Promise.all(data.map(async (product) => {
+const updateSale = (id, data) => 
+  Promise.all(data.map(async (product) => {
     const updateProduct = await connection.execute(
       'UPDATE StoreManager.sales_products SET quantity = ? WHERE sale_id = ? AND product_id = ?',
       [product.quantity, id, product.product_id],
     );
     return updateProduct;
-  }));
-};
+  })).then(() => true);
 
-const deleteSale = async (id) => {
-  await connection.execute(
+const deleteSale = (id) => connection.execute(
     'DELETE FROM StoreManager.sales WHERE id = ?',
     [id],
-  );
-};
+  ).then(() => true);
 
 module.exports = {
   getAllSales,

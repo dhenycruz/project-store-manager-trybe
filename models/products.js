@@ -23,26 +23,24 @@ const findName = async (productName) => {
     return products;
 };
 
-const updateProduct = (id, { name, quantity }) => {
-  connection.execute(
+const updateProduct = (id, { name, quantity }) => connection.execute(
     'UPDATE StoreManager.products SET name = ?, quantity = ? WHERE id = ?',
     [name, quantity, id],
-  );
-};
+  ).then(() => true);
 
 const saveProduct = async (name, quantity) => {
-  const result = await connection.execute(
+  const [result] = await connection.execute(
     'INSERT INTO StoreManager.products (name, quantity) VALUES (?,?)',
     [name, quantity], 
   );
-  return result;
+  return {
+    id: result.insertId,
+  };
 };
 
-const deleteProduct = async (id) => {
-  await connection.execute(
+const deleteProduct = (id) => connection.execute(
     'DELETE FROM StoreManager.products WHERE id = ?', [id],
-  );
-};
+  ).then(() => true);
 
 module.exports = {
   getAllProduct,
