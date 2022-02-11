@@ -3,7 +3,6 @@ const { expect } = require('chai');
 const connection = require('../../models/connection');
 const modelProduct = require('../../models/products');
 const modelSales = require('../../models/sales');
-const { execute } = require('../../models/connection');
 
 // Testando a camada model de protudo. 
 describe('Testando a camada model de Product:', () => {
