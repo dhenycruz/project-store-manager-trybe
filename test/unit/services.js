@@ -6,7 +6,6 @@ const modelSales = require('../../models/sales');
 
 const serviceProd = require('../../services/products');
 const serviceSales = require('../../services/sales');
-const { response } = require('express');
 
 describe('Tetando autenticações do Produto', () => {
   describe('Testando o nome do Produto', () => {
@@ -68,6 +67,139 @@ describe('Tetando autenticações do Produto', () => {
       expect(response).to.eql({ validate: false, 
         message: '"quantity" must be a number larger than or equal to 1',
         status: 422,
+      });
+    });
+  });
+  describe('Testando se o produto existe', () => {
+    describe('Se o produto existir', () => {
+      before(() => {
+        const resolves = [{  validate: false, message: 'Product already exists', status: 409 }];
+        sinon.stub(modelProduct, 'findName').resolves(resolves);
+      });
+      after(() => {
+        modelProduct.findName.restore();
+      });
+      it('Retorna um objeto com detalhes do erro', async () => {
+        const name = 'Produto';
+        const response = await serviceProd.alreadyExistsProd(name);
+        expect(response).to.eql({  validate: false, message: 'Product already exists', status: 409 });
+      });
+    });
+    describe('Se o produto não existir', () => {
+      before(() => {
+        sinon.stub(modelProduct, 'findName').resolves([]);
+      });
+      after(() => {
+        modelProduct.findName.restore();
+      });
+      it('Retorna true', async () => {
+        const name = 'Produto';
+        const response = await serviceProd.alreadyExistsProd(name);
+        expect(response).to.be.true;
+      });
+    });
+  });
+  describe('Testando se retorna todos os produtos', () => {
+    describe('Se existir uma ou mais produtos', () => {
+      before(() => {
+        const result = [
+          {
+            id: 1,
+            name: 'produto',
+            quantity: 5,
+          },
+          {
+            id: 2,
+            name: 'produto2',
+            quantity: 5,
+          }
+        ];
+        sinon.stub(modelProduct, 'getAllProduct').resolves(result);
+      });
+      after(() => {
+        modelProduct.getAllProduct.restore();
+      });
+      it('Retorna um array com objeto para cada produto', async () => {
+        const response = await serviceProd.getAllProduct();
+        expect(response).to.be.a('array');
+        expect(response).to.be.a('array').that.is.not.be.empty;
+        expect(response).to.eql([
+          {
+            id: 1,
+            name: 'produto',
+            quantity: 5,
+          },
+          {
+            id: 2,
+            name: 'produto2',
+            quantity: 5,
+          }
+        ]);
+      });
+    });
+    describe('Se não existir nenhgum produto', () => {
+      before(() => {
+        const result = [];
+        sinon.stub(modelProduct, 'getAllProduct').resolves(result);
+      });
+      after(() => {
+        modelProduct.getAllProduct.restore();
+      });
+      it('Retorna um array com objeto para cada produto', async () => {
+        const response = await serviceProd.getAllProduct();
+        expect(response).to.be.a('array');
+        expect(response).to.be.a('array').that.is.be.empty;
+      });
+    });
+  });
+  describe('Testando se retorna um produto específico', () => {
+    describe('Se encontrar o produto', () => {
+      before(() => {
+        const result = [{
+            id: 1,
+            name: 'produto',
+            quantity: 5,
+          }];
+        sinon.stub(modelProduct, 'getProduct').resolves(result);
+      });
+      after(() => {
+        modelProduct.getProduct.restore();
+      });
+      it('Retorna um objeto com propriedade do produto', async () => {
+        const id = 1;
+        const response = await serviceProd.getProduct(id);
+        expect(response).to.be.a('object');
+        expect(response).to.eql({ id: 1, name: 'produto', quantity: 5 });
+      });
+    });
+    describe('Se não encontrar o produto', () => {
+      before(() => {
+        sinon.stub(modelProduct, 'getProduct').resolves([false]);
+      });
+      after(() => { modelProduct.getProduct.restore(); });
+      it('Retorna false', async () => {
+        const id = 1;
+        const response = await serviceProd.getProduct(id);
+        expect(response).to.be.false;
+      });
+    });
+  });
+  describe('Testando atualizando um produto', () => {
+    describe('Se o produto for atualizado com sucesso', () => {
+      const id = 1;
+      const products = [
+        {
+          "product_id": 1,
+          "quantity": 6
+        }
+      ];
+      before(() => {
+        sinon.stub(modelProduct, 'updateProduct').resolves(true);
+      });
+      after(() => { modelProduct.updateProduct.restore(); });
+      it('retorna true', async () => {
+        const response = await serviceProd.updateProduct(id, products);
+        expect(response).to.be.true;
       });
     });
   });

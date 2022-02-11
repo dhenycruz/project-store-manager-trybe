@@ -84,7 +84,11 @@ describe('Testando a camada model de Product:', () => {
       it('Retorna um array com length igual a 1.', async () => {
         const response = await modelProduct.getProduct(id);
         expect(response).to.be.a('array').that.to.have.lengthOf(1);
-  
+        expect(response).to.eql([{
+          id: 1,
+          name: 'produto',
+          quantity: 5,
+        }]);
       });
     });
     describe('Quando o produto não é encontrado:', () => {
@@ -301,7 +305,6 @@ describe('Testando a camada model para Sales', () => {
       });
     });
   });
-
   describe('Atualizando uma venda - function updateSale', () => {
     describe('Quando uma venda é atualizada:', () => {
       const execute = true;
@@ -327,7 +330,6 @@ describe('Testando a camada model para Sales', () => {
       });
     });
   });
-
   describe('Deletando uma venda - function deleteSale', () => {
     describe('Quando uma venda é deletada', () => {
       const execute = true;

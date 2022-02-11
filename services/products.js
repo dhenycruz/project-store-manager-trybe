@@ -57,7 +57,8 @@ const getProduct = async (id) => {
 };
 
 const updateProduct = async (id, product) => {
-  await model.updateProduct(id, product);
+  const result = await model.updateProduct(id, product);
+  return result;
 };
 
 const saveProduct = async (name, quantity) => {
