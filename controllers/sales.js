@@ -26,7 +26,7 @@ const getAllSales = async (_request, response) => {
 const getSale = async (request, response) => {
   const { id } = request.params;
   const sale = await sales.getSale(id);
-  if (sale === true) return response.status(404).json({ message: 'Sale not found' });
+  if (sale === false) return response.status(404).json({ message: 'Sale not found' });
   response.status(200).json(sale);
 };
 
@@ -46,7 +46,7 @@ const updateSale = async (request, response) => {
 const deleteSale = async (request, response) => {
   const { id } = request.params;
   const res = await sales.deleteSale(id);
-  if (res === true) return response.status(404).json({ message: 'Sale not found' });
+  if (res === false) return response.status(404).json({ message: 'Sale not found' });
   response.status(200).json(res);
 };
 

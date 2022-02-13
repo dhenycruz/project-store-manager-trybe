@@ -6,6 +6,7 @@ const modelSales = require('../../models/sales');
 
 const serviceProd = require('../../services/products');
 const serviceSales = require('../../services/sales');
+const { restore } = require('sinon');
 
 describe('Tetando a camada de Service do Products', () => {
   describe('Testando o nome do Produto', () => {
@@ -385,6 +386,184 @@ describe('Testando a camada de Service de Sales', () => {
           const response = serviceSales.authQuantity(data);
           expect(response).to.be.true;
         })
+      });
+    });
+  });
+  describe('Testando o retorno de todos as vendas - function getAllSales', () => {
+    describe('Se existir uma ou mais vendas', () => {
+      const sales = [
+        {
+          "saleId": 1,
+          "date": "2021-09-09T04:54:29.000Z",
+          "product_id": 1,
+          "quantity": 2
+        },
+        {
+          "saleId": 1,
+          "date": "2021-09-09T04:54:54.000Z",
+          "product_id": 2,
+          "quantity": 2
+        }
+      ];
+      before(() => {
+        sinon.stub(modelSales, 'getAllSales').resolves(sales);
+      });
+      after(() => { modelSales.getAllSales.restore(); });
+      it('Retorna um array com objetos referente a venda e aos produtos', async () => {
+        const response = await serviceSales.getAllSales();
+        expect(response).to.be.a('array');
+        expect(response).to.eql(sales);
+      });
+    });
+    describe('Se não encontrar nenhuma venda', () => {
+      const sales = [];
+      before(() => {
+        sinon.stub(modelSales, 'getAllSales').resolves(sales);
+      });
+      after(() => { modelSales.getAllSales.restore(); });
+      it('Retorna um array vazio', async () => {
+        const response = await serviceSales.getAllSales();
+        expect(response).to.be.a('array');
+        expect(response).to.be.a('array').that.is.be.empty;
+      });
+    });
+  });
+  describe('Testando se retorna uma venda específica - function getSale', () => {
+    describe('Se encontrar a venda específica', () => {
+      const id = 1;
+      const sale = [
+        { 
+          "date": "2021-09-09T04:54:29.000Z",
+          "product_id": 1,
+          "quantity": 2
+        },
+        {
+          "date": "2021-09-09T04:54:54.000Z",
+          "product_id": 2,
+          "quantity": 2
+        }
+      ];
+      before(() => {
+        sinon.stub(modelSales, 'getSale').resolves(sale);
+      });
+      after(() => { modelSales.getSale,restore(); });
+      it('Retorna um array com objetos referente a essa venda e aos produtos', async () => {
+        const response = await serviceSales.getSale(id);
+        expect(response).to.be.a('array');
+        expect(response).to.eql(sale);
+      });
+    });
+    describe('Se não encontrar', () => {
+      const id = 5;
+      const sale = [];
+      before(() => {
+        sinon.stub(modelSales, 'getSale').resolves(sale);
+      });
+      after(() => { modelSales.getSale.restore(); });
+      it('Retorna false', async () => {
+        const response = await serviceSales.getSale(id);
+        expect(response).to.be.false;
+      });
+    });
+  });
+  describe('Testando o cadastro de uma venda - function createSale', () => {
+    describe('Se cadastra com sucesso', () => {
+      const data = [
+        {
+          "product_id": 1,
+          "quantity": 3
+        }
+      ];
+      const objetoReturn = {
+        "id": 1,
+        "itemsSold": [
+          {
+            "product_id": 1,
+            "quantity": 3
+          }
+        ]
+      };
+      before(() => {
+        sinon.stub(modelSales, 'createSale').resolves(objetoReturn);
+      });
+      after(() => { modelSales.createSale.restore(); });
+      it('Retorna um objeto com o id e array com produtos cadastro na venda', async () => {
+        const response = await serviceSales.createSale(data);
+        expect(response).to.be.a('object');
+        expect(response).to.eql(objetoReturn);
+      });
+    });
+  });
+  describe('Testando atualização de uma venda - function createSale', () => {
+    describe('Deverá atualizar apenas o produto, atualizando com sucesso', () => {
+      const id = 1;
+      const data = [
+        {
+          "product_id": 1,
+          "quantity": 6
+        }
+      ];
+      const objectReturn = {
+        "saleId": 1,
+        "itemUpdated": [
+          {
+            "product_id": 1,
+            "quantity": 6
+          }
+        ]
+      };
+      before(() => {
+        sinon.stub(modelSales, 'updateSale').resolves(true);
+      });
+      after(() => { modelSales.updateSale.restore(); });
+      it('Retorna um objeto com os produtos atualizados', async () => {
+        const response = await serviceSales.updateSale(id, data);
+        expect(response).to.be.a('object');
+        expect(response).to.eql(objectReturn);
+      });
+    });
+  });
+  describe('Testando se uma venda é deletada', () => {
+    describe('Se uma venda for deletada com sucesso', () => {
+      const id = 1;
+      const sale = [
+        { 
+          "date": "2021-09-09T04:54:29.000Z",
+          "product_id": 1,
+          "quantity": 2
+        },
+        {
+          "date": "2021-09-09T04:54:54.000Z",
+          "product_id": 2,
+          "quantity": 2
+        }
+      ];
+      before(() => {
+        sinon.stub(modelSales, 'getSale').resolves(sale);
+        sinon.stub(modelSales, 'deleteSale').resolves(true);
+      });
+      after(() => {
+        modelSales.getSale.restore();
+        modelSales.deleteSale.restore();
+      });
+      it('Deverá retorna a venda que foi deletada', async () => {
+        const response = await serviceSales.deleteSale(id);
+        expect(response).to.be.a('array');
+        expect(response).to.eql(sale);
+      });
+    });
+    describe('Para deletar uma venda, ela deverá existir', () => {
+      describe('Caso a venda não exista', () => {
+        const id = 1;
+        const sale = [];
+        before(() => {
+          sinon.stub(modelSales, 'getSale').resolves(sale);
+        });
+        after(() => { modelSales.getSale.restore(); });
+        it('Retorna false', async () => {
+          const response = await serviceSales.deleteSale(id);
+          expect(response).to.be.false;
+        });
       });
     });
   });
