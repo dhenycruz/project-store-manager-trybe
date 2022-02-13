@@ -7,7 +7,7 @@ const modelSales = require('../../models/sales');
 const serviceProd = require('../../services/products');
 const serviceSales = require('../../services/sales');
 
-describe('Tetando autenticações do Produto', () => {
+describe('Tetando a camada de Service do Products', () => {
   describe('Testando o nome do Produto', () => {
     it('Se o nome do produto estiver correto, retorna true', () => {
       const name = 'Produto';
@@ -153,13 +153,13 @@ describe('Tetando autenticações do Produto', () => {
     });
   });
   describe('Testando se retorna um produto específico', () => {
-    describe('Se encontrar o produto', () => {
+   describe('Se encontrar o produto', () => {
+    const result = [{
+      id: 1,
+      name: 'produto',
+      quantity: 5,
+    }];
       before(() => {
-        const result = [{
-            id: 1,
-            name: 'produto',
-            quantity: 5,
-          }];
         sinon.stub(modelProduct, 'getProduct').resolves(result);
       });
       after(() => {
@@ -173,8 +173,9 @@ describe('Tetando autenticações do Produto', () => {
       });
     });
     describe('Se não encontrar o produto', () => {
+      const result = [];
       before(() => {
-        sinon.stub(modelProduct, 'getProduct').resolves([false]);
+        sinon.stub(modelProduct, 'getProduct').resolves(result);
       });
       after(() => { modelProduct.getProduct.restore(); });
       it('Retorna false', async () => {
@@ -200,6 +201,190 @@ describe('Tetando autenticações do Produto', () => {
       it('retorna true', async () => {
         const response = await serviceProd.updateProduct(id, products);
         expect(response).to.be.true;
+      });
+    });
+  });
+  describe('Testando salvando um produto', () => {
+    describe('Se o produto for criado com sucesso', () => {
+      const product = { name: 'produto', quantity: 10 };
+      before(() => {
+        const result = { id: 1};
+        sinon.stub(modelProduct, 'saveProduct').resolves(result);
+      });
+      after(() => { modelProduct.saveProduct.restore(); });
+      it('Retorna um objeto com o id do produto criado', async () => {
+        const response = await serviceProd.saveProduct(product.name, product.quantity);
+        expect(response).to.be.a('object');
+        expect(response).to.eql({ validate: true, result: { id: 1, name: 'produto', quantity: 10 } });
+      });
+    });
+  });
+  describe('Testando deletando Produto', () => {
+    describe('Se um produto é deletado com sucesso', () => {
+      const id = 1;
+      const product = [{ id: 1, name: "produto A", quantity: 10 }];
+      before(() => {
+        sinon.stub(modelProduct, 'getProduct').resolves(product);
+        sinon.stub(modelProduct, 'deleteProduct').resolves([true]);
+      });
+      after(() => {
+        modelProduct.deleteProduct.restore();
+        modelProduct.getProduct.restore();
+      });
+      it('Retorna um objeto com detalhes do produto deletado', async () => {
+        const response = await serviceProd.deleteProduct(id);
+        expect(response).to.be.a('object');
+        expect(response).to.eql({
+          id: 1,
+          name: "produto A",
+          quantity: 10
+        });
+      });
+    });
+  });
+});
+describe('Testando a camada de Service de Sales', () => {
+  describe('Testando autenticação de Produto - function autProduct', () => {
+    const authFail = { validate: false,
+      message: '"product_id" is required',
+      status: 400,
+    };
+    describe('Se algum product_id do array for vazio, undefined ou null', () => {
+      const products = [
+        {
+          "id": 1,
+          "name": "produto A",
+          "quantity": 10
+        },
+        {
+          "id": 2,
+          "name": "produto B",
+          "quantity": 20
+        }
+      ];
+      const data =  [
+        {
+          "quantity": 1
+        }
+      ];
+      before(() => {
+        sinon.stub(modelProduct, 'getAllProduct').resolves(products);
+      });
+      after(() => {
+        modelProduct.getAllProduct.restore();
+      });
+      it('Retorna um objeto com detalhes do erro', async () => {
+        const response = await serviceSales.authProduct(data);
+        expect(response).to.be.a('object');
+        expect(response).to.eql(authFail);
+      });
+    });
+    describe('Se o produto não existir', () => {
+      const products = [
+        {
+          "id": 1,
+          "name": "produto A",
+          "quantity": 10
+        },
+        {
+          "id": 2,
+          "name": "produto B",
+          "quantity": 20
+        }
+      ];
+      const data =  [
+        {
+          "product_id": 3,
+          "quantity": 1
+        }
+      ];
+      before(() => {
+        sinon.stub(modelProduct, 'getAllProduct').resolves(products);
+      });
+      after(() => { modelProduct.getAllProduct.restore(); });
+      it('Retorna um objeto com detalhes do erro', async () => {
+        const  response = await serviceSales.authProduct(data);
+        expect(response).to.be.a('object');
+        expect(response).to.eql(authFail);
+      });
+    });
+    describe('Se a autenticação de produto estiver tudo certo', () => {
+      const products = [
+        {
+          "id": 1,
+          "name": "produto A",
+          "quantity": 10
+        },
+        {
+          "id": 2,
+          "name": "produto B",
+          "quantity": 20
+        }
+      ];
+      const data =  [
+        {
+          "product_id": 1,
+          "quantity": 1
+        }
+      ];
+      before(() => {
+        sinon.stub(modelProduct, 'getAllProduct').resolves(products);
+      });
+      after(() => {
+        modelProduct.getAllProduct.restore();
+      });
+      it('retorna true', async () => {
+        const response = await serviceSales.authProduct(data);
+        expect(response).to.be.true;
+      });
+    });
+  });
+  describe('Testando autenticação de Quantidade- function authQuantity', () => {
+    describe('Se a quantidade for vazia ou undefined', () => {
+      const data = [{ "product_id": 1, "quantity": '' }];
+      it('Retorna um objeto com detalhes do erro', () => {
+        const response = serviceSales.authQuantity(data);
+        expect(response).to.be.a('object');
+        expect(response).to.eql({ validate: false, message: '"quantity" is required', status: 400 });
+      });
+    });
+    describe('Se a quantidade for do tipo string', () => {
+      const data = [
+        { "product_id": 1, "quantity": 5 },
+        { "product_id": 2, "quantity": '4'}
+      ];
+      it('Retorna um objeto com detalhes do erro', () => {
+        const response = serviceSales.authQuantity(data);
+        expect(response).to.be.a('object');
+        expect(response).to.eql({
+          validate: false,
+          message: '"quantity" must be a number larger than or equal to 1',
+          status: 422,
+        });
+      });
+      describe('Se a quantidade for menor ou igual a 0', () => {
+        const data = [
+          { "product_id": 1, "quantity": 5 },
+          { "product_id": 2, "quantity": -1 }
+        ];
+        it('Retorna um objeto com detalhes do erro', () => {
+          const response = serviceSales.authQuantity(data);
+          expect(response).to.be.a('object');
+          expect(response).to.eql({
+            validate: false,
+            message: '"quantity" must be a number larger than or equal to 1',
+            status: 422,
+          })
+        });
+      });
+      describe('Se a quantidade estiver correta', () => {
+        const data = [
+          { "product_id": 1,"quantity": 5 },
+        ];
+        it('Retorna true', () => {
+          const response = serviceSales.authQuantity(data);
+          expect(response).to.be.true;
+        })
       });
     });
   });

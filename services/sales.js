@@ -12,6 +12,7 @@ const authProduct = async (dataRequest) => {
     ) => data.product_id === '' || data.product_id === undefined || data.product_id === null);
 
   if (authProductBody) return authFail;
+  
   const productsBody = dataRequest.some((data) => {
     const filterProduct = products.filter((el) => data.product_id === el.id);
     if (filterProduct.length < 1) return true;

@@ -21,7 +21,7 @@ const authQuantity = (quantity) => {
       status: 400,
     };
   }
-  // eslint-disable-next-line no-undef
+
   if (typeof quantity === 'string' || quantity <= 0) {
     return {
       validate: false,
@@ -62,13 +62,6 @@ const updateProduct = async (id, product) => {
 };
 
 const saveProduct = async (name, quantity) => {
-  /* const authName = validateName(name);
-  const authQuantity = validateQuantity(quantity);
-  if (authName !== true) return authName;
-  if (authQuantity !== true) return authQuantity;
-  const authAlreadyExists = await alreadyExistsProd(name);
-  if (authAlreadyExists !== true) return authAlreadyExists; */
-
   const result = await model.saveProduct(name, quantity);
   return {
     validate: true,
