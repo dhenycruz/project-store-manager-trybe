@@ -27,6 +27,12 @@ const virifyStockProdut = async (request, response, next) => {
   next();
 };
 
+const updateQuantityProductStock = async (request, _response, next) => {
+  const data = request.body;
+  await sales.updateQuantityProductStock(data);
+  next();
+};
+
 const getAllSales = async (_request, response) => {
   const salesAll = await sales.getAllSales();
   response.status(200).json(salesAll);
@@ -68,4 +74,5 @@ module.exports = {
   updateSale,
   deleteSale,
   virifyStockProdut,
+  updateQuantityProductStock,
 };

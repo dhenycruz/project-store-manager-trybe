@@ -80,16 +80,24 @@ const virifyStockProdut = async (arrayProduct) => {
   }
 
   return true;
-  
-  /* const { quantity } = product;
-  const productBD = await modelProduct.getProduct(id);
-  if (productBD.quantity < quantity) {
-    return {
-      validate: false,
-      status: 422,
-      message: 'Such amount is not permitted to sell',
+};
+
+const updateQuantityProductStock = async (arrayProduct, deleteSale = false) => {
+  const productsAll = await modelProduct.getAllProduct();
+  arrayProduct.forEach(async (product) => {
+    const [prodFilter] = productsAll.filter((prod) => prod.id === product.product_id);
+    let newQuantity = 0;
+    if (deleteSale) {
+      newQuantity = prodFilter.quantity + product.quantity;
+    } else {
+      newQuantity = prodFilter.quantity - product.quantity;
+    }
+    const objProduct = {
+      name: prodFilter.name,
+      quantity: newQuantity,
     };
-  } */
+    await modelProduct.updateProduct(product.product_id, objProduct);
+  });
 };
 
 const updateSale = async (id, data) => {
@@ -102,11 +110,10 @@ const updateSale = async (id, data) => {
 
 const deleteSale = async (id) => {
   const sale = await model.getSale(id);
-
   if (sale.length < 1) return false;
   
   await model.deleteSale(id);
-
+  updateQuantityProductStock(sale, true);
   return sale;
 };
 
@@ -119,4 +126,5 @@ module.exports = {
   updateSale,
   deleteSale,
   virifyStockProdut,
+  updateQuantityProductStock,
 };

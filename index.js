@@ -34,7 +34,9 @@ app.get('/sales', sales.getAllSales);
 app.get('/sales/:id', sales.getSale);
 
 app.post('/sales', 
-sales.authProduct, sales.authQuantity, sales.virifyStockProdut, sales.createSale);
+sales.authProduct, sales.authQuantity, sales.virifyStockProdut,
+sales.updateQuantityProductStock,
+sales.createSale);
 
 app.put('/sales/:id', sales.authProduct, sales.authQuantity, sales.updateSale);
 
