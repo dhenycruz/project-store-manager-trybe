@@ -60,6 +60,38 @@ const createSale = async (data) => {
   return sale;
 };
 
+const virifyStockProdut = async (arrayProduct) => {
+  const productsAll = await modelProduct.getAllProduct();
+
+  const result = arrayProduct.some((data) => {
+    const [filterProduct] = productsAll.filter((el) => data.product_id === el.id);
+    console.log(filterProduct.quantity, data.quantity);
+    if (filterProduct.quantity < data.quantity) return true;
+    return false;
+  });
+  console.log(result);
+
+  if (result) { 
+    return {
+      validate: false,
+      status: 422,
+      message: 'Such amount is not permitted to sell',
+    };
+  }
+
+  return true;
+  
+  /* const { quantity } = product;
+  const productBD = await modelProduct.getProduct(id);
+  if (productBD.quantity < quantity) {
+    return {
+      validate: false,
+      status: 422,
+      message: 'Such amount is not permitted to sell',
+    };
+  } */
+};
+
 const updateSale = async (id, data) => {
   await model.updateSale(id, data);
   return {
@@ -86,4 +118,5 @@ module.exports = {
   createSale,
   updateSale,
   deleteSale,
+  virifyStockProdut,
 };

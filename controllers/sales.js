@@ -18,6 +18,15 @@ const authQuantity = (request, response, next) => {
   next();
 };
 
+const virifyStockProdut = async (request, response, next) => {
+  const data = request.body;
+  const virifyStock = await sales.virifyStockProdut(data);
+  if (virifyStock !== true) {
+    return response.status(virifyStock.status).json({ message: virifyStock.message });
+  }
+  next();
+};
+
 const getAllSales = async (_request, response) => {
   const salesAll = await sales.getAllSales();
   response.status(200).json(salesAll);
@@ -58,4 +67,5 @@ module.exports = {
   createSale,
   updateSale,
   deleteSale,
+  virifyStockProdut,
 };
