@@ -7,6 +7,7 @@ const modelSales = require('../../models/sales');
 const serviceProd = require('../../services/products');
 const serviceSales = require('../../services/sales');
 const { restore } = require('sinon');
+const { execute } = require('../../models/connection');
 
 describe('Tetando a camada de Service do Products', () => {
   describe('Testando o nome do Produto', () => {
@@ -491,6 +492,139 @@ describe('Testando a camada de Service de Sales', () => {
         const response = await serviceSales.createSale(data);
         expect(response).to.be.a('object');
         expect(response).to.eql(objetoReturn);
+      });
+    });
+  });
+  describe('Testando a quantidade de produto em estoque - virifySocktProduct', () => {
+    describe('Quando uma venda for realizada, garanta que a quantidade sendo vendida está disponível no estoque', () => {
+      describe('Se tiver quantidade suficiente em estoque para venda', () => {
+        const productSales = [
+          {
+            "product_id": 1,
+            "quantity": 3
+          }
+        ];
+        const products = [
+          {
+            "id": 1,
+            "name": "produto A",
+            "quantity": 10
+          },
+          {
+            "id": 2,
+            "name": "produto B",
+            "quantity": 20
+          }
+        ];
+        before(() => {
+          sinon.stub(modelProduct, 'getAllProduct').resolves(products);
+        });
+        after(() => { modelProduct.getAllProduct.restore(); });
+        it('Retorna true', async () => {
+          const response = await serviceSales.virifyStockProdut(productSales);
+          expect(response).to.be.true;
+        });
+      });
+      describe('Se não tiver a quantidade suficiente para venda', () => {
+        const productSales = [
+          {
+            "product_id": 1,
+            "quantity": 15
+          }
+        ];
+        const products = [
+          {
+            "id": 1,
+            "name": "produto A",
+            "quantity": 10
+          },
+          {
+            "id": 2,
+            "name": "produto B",
+            "quantity": 20
+          }
+        ];
+        before(() => {
+          sinon.stub(modelProduct, 'getAllProduct').resolves(products);
+        });
+        after(() => { modelProduct.getAllProduct.restore(); });
+        it('Retorna um objecto com detalhes do erro', async () => {
+          const response = await serviceSales.virifyStockProdut(productSales);
+          expect(response).to.be.a('object');
+          expect(response).to.eql({
+            validate: false,
+            status: 422,
+            message: 'Such amount is not permitted to sell',
+          });
+        });
+      });
+    });
+  });
+  describe('Testando atualizando a quantidade de produtos - function updeQuantityProductStock', () => {
+    describe('Se atualização for chamada da função createSales, o paramentro deleteSale deverá ser false', () => {
+      const productSales = [
+        {
+          "product_id": 1,
+          "quantity": 5
+        }
+      ];
+      const products = [
+        {
+          "id": 1,
+          "name": "produto A",
+          "quantity": 10
+        },
+        {
+          "id": 2,
+          "name": "produto B",
+          "quantity": 20
+        }
+      ];
+      // const deleteSale = false;
+      before(() => {
+        sinon.stub(modelProduct, 'getAllProduct').resolves(products);
+        sinon.stub(modelProduct, 'updateProduct').resolves(true);
+      });
+      after(() => { 
+        modelProduct.getAllProduct.restore(); 
+        modelProduct.updateProduct.restore();
+      });
+      it('Retorna true se atualização for bem sucedida', async () => {
+        const response = await serviceSales.updateQuantityProductStock(productSales);
+        expect(response).to.be.true;
+      });
+    });
+    describe('Se atualização for chamada da função createSales, o paramentro deleteSale deverá ser false', () => {
+      const productSales = [
+        {
+          "product_id": 1,
+          "quantity": 5
+        }
+      ];
+      const products = [
+        {
+          "id": 1,
+          "name": "produto A",
+          "quantity": 10
+        },
+        {
+          "id": 2,
+          "name": "produto B",
+          "quantity": 20
+        }
+      ];
+      const deleteSale = true;
+      before(() => {
+        sinon.stub(modelProduct, 'getAllProduct').resolves(products);
+        sinon.stub(modelProduct, 'updateProduct').resolves(true);
+      });
+      after(() => { 
+        modelProduct.getAllProduct.restore(); 
+        modelProduct.updateProduct.restore();
+      });
+      it('Retorna true se atualização for bem sucedida', async () => {
+        const response = await serviceSales.updateQuantityProductStock(productSales, deleteSale);
+        expect(response).to.be.true;
       });
     });
   });

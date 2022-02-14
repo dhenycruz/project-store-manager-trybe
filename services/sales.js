@@ -69,7 +69,6 @@ const virifyStockProdut = async (arrayProduct) => {
     if (filterProduct.quantity < data.quantity) return true;
     return false;
   });
-  console.log(result);
 
   if (result) { 
     return {
@@ -98,6 +97,7 @@ const updateQuantityProductStock = async (arrayProduct, deleteSale = false) => {
     };
     await modelProduct.updateProduct(product.product_id, objProduct);
   });
+  return true;
 };
 
 const updateSale = async (id, data) => {
